@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DominicWuest/biscepter/pkg/biscepter"
+	"github.com/CelineWuest/biscepter/pkg/biscepter"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/image"
@@ -45,7 +45,7 @@ RUN go build -o server main.go
 CMD ./server
 `,
 
-		Repository: "https://github.com/DominicWuest/biscepter-test-repo.git",
+		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
 	}
 
 	job.Log.SetLevel(logrus.TraceLevel)
@@ -204,7 +204,7 @@ RUN go build -o server main.go
 CMD ./server
 `,
 
-		Repository: "https://github.com/DominicWuest/biscepter-test-repo.git",
+		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
 	}
 
 	// Run job whose build fails on commit 03cdf844a180c44763e12f29901ab5f8d61444f3, which is the first commit to be tested
@@ -255,7 +255,7 @@ RUN go build -o server main.go
 CMD [[ $(git rev-parse HEAD) != "03cdf844a180c44763e12f29901ab5f8d61444f3" ]] && ./server
 `,
 
-		Repository: "https://github.com/DominicWuest/biscepter-test-repo.git",
+		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
 	}
 
 	// Run job whose CMD fails on commit 03cdf844a180c44763e12f29901ab5f8d61444f3, which is the first commit to be tested
@@ -293,7 +293,7 @@ func TestRunCommitByOffset(t *testing.T) {
 
 		Dockerfile: `FROM golang:1.22.0-alpine`,
 
-		Repository: "https://github.com/DominicWuest/biscepter-test-repo.git",
+		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
 	}
 
 	_, err := job.RunCommitByOffset(1)

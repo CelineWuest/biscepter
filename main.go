@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DominicWuest/biscepter/cmd"
+	"github.com/CelineWuest/biscepter/cmd"
 )
 
 func main() {

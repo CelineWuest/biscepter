@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/DominicWuest/biscepter/pkg/biscepter"
+	"github.com/CelineWuest/biscepter/pkg/biscepter"
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )

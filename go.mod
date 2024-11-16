@@ -1,4 +1,4 @@
-module github.com/DominicWuest/biscepter
+module github.com/CelineWuest/biscepter
 
 go 1.22.0
 

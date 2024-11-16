@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/DominicWuest/biscepter/pkg/biscepter"
+	"github.com/CelineWuest/biscepter/pkg/biscepter"
 	"github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
 )

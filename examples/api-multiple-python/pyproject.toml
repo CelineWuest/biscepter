@@ -2,7 +2,7 @@
 name = "api-multiple-python"
 version = "0.1.0"
 description = ""
-authors = ["DominicWuest <dominic.wuest@hotmail.com>"]
+authors = ["CelineWuest <dominic.wuest@hotmail.com>"]
 readme = "README.md"
 package-mode = false
 

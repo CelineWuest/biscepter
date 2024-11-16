@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/DominicWuest/biscepter/pkg/biscepter"
+	"github.com/CelineWuest/biscepter/pkg/biscepter"
 )
 
 func main() {

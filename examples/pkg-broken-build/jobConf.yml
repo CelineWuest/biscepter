@@ -1,4 +1,4 @@
-repository: "git@github.com:DominicWuest/biscepter-test-repo.git"
+repository: "git@github.com:CelineWuest/biscepter-test-repo.git"
 goodCommit: "ed0e5cefe86ff95e83baeb472cfb15a2423d846e"
 badCommit: "e9bdabf4c4eb087645705fbd8c26f52bfab6aec8"
 port: 3333

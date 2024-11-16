@@ -1,5 +1,5 @@
 # The URL of the repository to bisect
-repository: "git@github.com:DominicWuest/biscepter-test-repo.git"
+repository: "git@github.com:CelineWuest/biscepter-test-repo.git"
 # The hash of the good commit, i.e. the commit which does not exhibit any issues
 goodCommit: "8ee0e2a3c12e324c1b5c41f7861e341d91692efb"
 # The hash of the bad commit, i.e. the commit which exhibits the issue(s) to be bisected

@@ -7,8 +7,8 @@ import (
 	"runtime/debug"
 	"strconv"
 
-	"github.com/DominicWuest/biscepter/internal/server"
-	"github.com/DominicWuest/biscepter/pkg/biscepter"
+	"github.com/CelineWuest/biscepter/internal/server"
+	"github.com/CelineWuest/biscepter/pkg/biscepter"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

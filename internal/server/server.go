@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 
-	"github.com/DominicWuest/biscepter/pkg/biscepter"
+	"github.com/CelineWuest/biscepter/pkg/biscepter"
 )
 
 type ServerType int

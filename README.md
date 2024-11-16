@@ -5,14 +5,14 @@
 <h2 align=center>Biscepter: Efficient Repeated and Concurrent Bisection</h2>
 
 <p align=center>
-  <img alt="License Badge" src="https://img.shields.io/github/license/DominicWuest/biscepter">
-  <a href="https://pkg.go.dev/github.com/DominicWuest/biscepter?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="Biscepter GoDoc"></a>
+  <img alt="License Badge" src="https://img.shields.io/github/license/CelineWuest/biscepter">
+  <a href="https://pkg.go.dev/github.com/CelineWuest/biscepter?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="Biscepter GoDoc"></a>
 </p>
 
 <p align=center>
-  <a href="https://github.com/DominicWuest/biscepter/actions/workflows/build.yml"><img alt="CI/CD Build Status Badge" src="https://github.com/DominicWuest/biscepter/actions/workflows/build.yml/badge.svg"></a>
-  <a href="https://github.com/DominicWuest/biscepter/actions/workflows/test.yml"><img alt="CI/CD Test Status Badge" src="https://github.com/DominicWuest/biscepter/actions/workflows/test.yml/badge.svg"></a>
-  <a href="https://codecov.io/gh/DominicWuest/biscepter"><img alt="CI/CD Coverage Status Badge" src="https://codecov.io/gh/DominicWuest/biscepter/branch/main/graph/badge.svg?token=lY5KKsQlpx"/></a>
+  <a href="https://github.com/CelineWuest/biscepter/actions/workflows/build.yml"><img alt="CI/CD Build Status Badge" src="https://github.com/CelineWuest/biscepter/actions/workflows/build.yml/badge.svg"></a>
+  <a href="https://github.com/CelineWuest/biscepter/actions/workflows/test.yml"><img alt="CI/CD Test Status Badge" src="https://github.com/CelineWuest/biscepter/actions/workflows/test.yml/badge.svg"></a>
+  <a href="https://codecov.io/gh/CelineWuest/biscepter"><img alt="CI/CD Coverage Status Badge" src="https://codecov.io/gh/CelineWuest/biscepter/branch/main/graph/badge.svg?token=lY5KKsQlpx"/></a>
 </p>
 
 <details>
@@ -51,7 +51,7 @@ Installation of the biscepter CLI requires Go `1.22.0` or newer.
 
 Installing directly:
 ```
-$ go install github.com/DominicWuest/biscepter@latest
+$ go install github.com/CelineWuest/biscepter@latest
 ```
 
 You should now be able to run dinkel from the command line using `biscepter`.  
@@ -61,7 +61,7 @@ If you encounter an error, ensure that the `GOBIN` environment variable is set a
 
 Alternatively, you may clone this repository and build biscepter locally
 ```
-$ git clone git@github.com:DominicWuest/biscepter.git
+$ git clone git@github.com:CelineWuest/biscepter.git
 $ cd biscepter
 $ go build
 ```
@@ -80,7 +80,7 @@ Be sure to check out the examples under [/examples/api-*](/examples) to get a qu
 
 # 📦 Go Package
 
-This repository contains a [Go package](/pkg/biscepter), whose documentation can be found [here](https://pkg.go.dev/github.com/DominicWuest/biscepter/pkg/biscepter).
+This repository contains a [Go package](/pkg/biscepter), whose documentation can be found [here](https://pkg.go.dev/github.com/CelineWuest/biscepter/pkg/biscepter).
 Said package allows a Go program to control biscepter without a need for the CLI.  
 Be sure to check out the examples under [/examples/pkg-*](/examples) to get a quick overview of how to use the Go package!
 

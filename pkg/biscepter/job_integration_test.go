@@ -212,11 +212,24 @@ CMD ./server
 	assert.NoError(t, err, "Failed to start job")
 
 	// Block until the first container is ready
-	<-rsChan
+	rs := <-rsChan
 
 	// Make sure the commit replacement is set correctly
 	out, err := io.ReadAll(replacements)
+	assert.NoError(t, err, "Couldn't read replacements file")
 	assert.Equal(t, "03cdf844a180c44763e12f29901ab5f8d61444f3:22a405d30a6c8d3eb045062ac2be4cff57e30d29,", string(out), "Commit replacement set incorrectly")
+
+	// Report the next commit to be broken as well
+	rs.IsBroken()
+
+	// Block until next container is ready
+	<-rsChan
+
+	// Make sure the commit replacement is set correctly
+	replacements.Seek(0, io.SeekStart)
+	out, err = io.ReadAll(replacements)
+	assert.NoError(t, err, "Couldn't read replacements file")
+	assert.Equal(t, "03cdf844a180c44763e12f29901ab5f8d61444f3:22a405d30a6c8d3eb045062ac2be4cff57e30d29,22a405d30a6c8d3eb045062ac2be4cff57e30d29:9b70eda4f3e48d5d906f99b570a16d5a979b0a99,", string(out), "Commit replacement set incorrectly")
 
 	os.Remove(replacements.Name())
 

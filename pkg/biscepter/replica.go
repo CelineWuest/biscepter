@@ -163,6 +163,24 @@ func (r *replica) isBad(rs RunningSystem) {
 	r.waitingCond.L.Unlock()
 }
 
+func (r *replica) isBroken(rs RunningSystem) {
+	r.replaceCommit(rs.commitRootOffset)
+
+	// Release the in initNextSystem acquired semaphore with a weight of 1
+	r.parentJob.replicaSemaphore.Release(1)
+
+	go func() {
+		if err := rs.stop(); err != nil {
+			r.log.Warnf("Failed to stop container %s - %v", rs.containerName, err)
+		}
+	}()
+
+	// Signal goroutine started in start() to wake up again
+	r.waitingCond.L.Lock()
+	r.waitingCond.Signal()
+	r.waitingCond.L.Unlock()
+}
+
 func (r *replica) initNextSystem() (*RunningSystem, error) {
 	// Acquire the semaphore with a weight of 1
 	r.parentJob.replicaSemaphore.Acquire(context.Background(), 1)
@@ -582,6 +600,16 @@ func (r *RunningSystem) IsBad() {
 	}
 	r.wasRated = true
 	r.parentReplica.isBad(*r)
+}
+
+// IsBad tells biscepter that this running system is bad.
+// If IsBad is called after the running system was already rated by a previous IsGood or IsBad method invocation, it will panic.
+func (r *RunningSystem) IsBroken() {
+	if r.wasRated {
+		panic(fmt.Sprintf("IsBroken was called on running system of replica with index %d after it was already rated", r.ReplicaIndex))
+	}
+	r.wasRated = true
+	r.parentReplica.isBroken(*r)
 }
 
 func (r RunningSystem) stop() error {

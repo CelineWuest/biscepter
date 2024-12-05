@@ -9,7 +9,7 @@ require (
 	github.com/docker/go-connections v0.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/manifoldco/promptui v0.9.0
-	github.com/moby/moby v26.0.0+incompatible
+	github.com/moby/moby v26.1.0+incompatible
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/otiai10/copy v1.14.0
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5

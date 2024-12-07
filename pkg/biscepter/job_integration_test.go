@@ -134,10 +134,10 @@ func TestIntegration(t *testing.T) {
 		bisectTestRepo(t,
 			1,
 			0,
-			"8ee0e2a3c12e324c1b5c41f7861e341d91692efb",
-			"9b70eda4f3e48d5d906f99b570a16d5a979b0a99",
+			"69931611d894fc64d1caa98ad819d44d446a23c4",
+			"130f2278ef36a4690ea92781d63879ba2453ecac",
 			[]string{
-				"03cdf844a180c44763e12f29901ab5f8d61444f3",
+				"fc948eda71818bf9493735151fa0acedb4328024",
 			},
 		)
 	})
@@ -146,12 +146,12 @@ func TestIntegration(t *testing.T) {
 		bisectTestRepo(t,
 			3,
 			0,
-			"8ee0e2a3c12e324c1b5c41f7861e341d91692efb",
-			"d3245c03595822db45d6cb990b417093ddc12af9",
+			"69931611d894fc64d1caa98ad819d44d446a23c4",
+			"3219afdce02b9eb2633343ba6abe4e77b114b130",
 			[]string{
-				"03cdf844a180c44763e12f29901ab5f8d61444f3",
-				"22a405d30a6c8d3eb045062ac2be4cff57e30d29",
-				"9b70eda4f3e48d5d906f99b570a16d5a979b0a99",
+				"fc948eda71818bf9493735151fa0acedb4328024",
+				"d7b2ed805547dec1010e945c6f1958407a694e57",
+				"130f2278ef36a4690ea92781d63879ba2453ecac",
 			},
 		)
 	})
@@ -160,12 +160,12 @@ func TestIntegration(t *testing.T) {
 		bisectTestRepo(t,
 			3,
 			3,
-			"76b5c32593cd9e9295db6c2e84bff32154427a65",
-			"80afecdd27682647ffcd7a64483fbb207afdc675",
+			"0fe06fb660b5351832a71dbfe7be48bb6b69bdd0",
+			"41b75b611b89b40009676fc87d3e54ae60270030",
 			[]string{
-				"db9cf6aa3a666e41e69f50a783e59d57af724877",
-				"72cad4a376c41aa6f83720d195c34cda83d6e7db",
-				"cfad207f7deb9beb6855bc050d20d721945d30df",
+				"bd7c3fdb354d9c230c4b5c655e8e7b7435f93dd8",
+				"8ea445c4f48669df1e00080c4237d5961f1f41d9",
+				"c8f90f669682496ca30380dc6660ab08fccac00e",
 			},
 		)
 	})
@@ -189,8 +189,8 @@ func TestReplacingBrokenCommits(t *testing.T) {
 			{Port: 3333, CheckType: biscepter.HttpGet200, Data: "/1", Config: biscepter.HealthcheckConfig{Retries: 50, Backoff: 10 * time.Millisecond, MaxBackoff: 10 * time.Millisecond}},
 		},
 
-		GoodCommit: "8ee0e2a3c12e324c1b5c41f7861e341d91692efb",
-		BadCommit:  "9b70eda4f3e48d5d906f99b570a16d5a979b0a99",
+		GoodCommit: "69931611d894fc64d1caa98ad819d44d446a23c4",
+		BadCommit:  "130f2278ef36a4690ea92781d63879ba2453ecac",
 
 		CommitReplacementsBackup: replacements.Name(),
 
@@ -199,7 +199,7 @@ FROM golang:1.22.0-alpine
 WORKDIR /app
 RUN apk add git
 COPY . .
-RUN [[ $(git rev-parse HEAD) != "03cdf844a180c44763e12f29901ab5f8d61444f3" ]]
+RUN [[ $(git rev-parse HEAD) != "fc948eda71818bf9493735151fa0acedb4328024" ]]
 RUN go build -o server main.go
 CMD ./server
 `,
@@ -207,7 +207,7 @@ CMD ./server
 		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
 	}
 
-	// Run job whose build fails on commit 03cdf844a180c44763e12f29901ab5f8d61444f3, which is the first commit to be tested
+	// Run job whose build fails on commit fc948eda71818bf9493735151fa0acedb4328024, which is the first commit to be tested
 	rsChan, _, err := job.Run()
 	assert.NoError(t, err, "Failed to start job")
 
@@ -217,7 +217,7 @@ CMD ./server
 	// Make sure the commit replacement is set correctly
 	out, err := io.ReadAll(replacements)
 	assert.NoError(t, err, "Couldn't read replacements file")
-	assert.Equal(t, "03cdf844a180c44763e12f29901ab5f8d61444f3:22a405d30a6c8d3eb045062ac2be4cff57e30d29,", string(out), "Commit replacement set incorrectly")
+	assert.Equal(t, "fc948eda71818bf9493735151fa0acedb4328024:d7b2ed805547dec1010e945c6f1958407a694e57,", string(out), "Commit replacement set incorrectly")
 
 	// Report the next commit to be broken as well
 	rs.IsBroken()
@@ -229,7 +229,7 @@ CMD ./server
 	replacements.Seek(0, io.SeekStart)
 	out, err = io.ReadAll(replacements)
 	assert.NoError(t, err, "Couldn't read replacements file")
-	assert.Equal(t, "03cdf844a180c44763e12f29901ab5f8d61444f3:22a405d30a6c8d3eb045062ac2be4cff57e30d29,22a405d30a6c8d3eb045062ac2be4cff57e30d29:9b70eda4f3e48d5d906f99b570a16d5a979b0a99,", string(out), "Commit replacement set incorrectly")
+	assert.Equal(t, "fc948eda71818bf9493735151fa0acedb4328024:d7b2ed805547dec1010e945c6f1958407a694e57,d7b2ed805547dec1010e945c6f1958407a694e57:130f2278ef36a4690ea92781d63879ba2453ecac,", string(out), "Commit replacement set incorrectly")
 
 	os.Remove(replacements.Name())
 
@@ -254,8 +254,8 @@ func TestReplacingBrokenHealthcheck(t *testing.T) {
 			{Port: 3333, CheckType: biscepter.HttpGet200, Data: "/1", Config: biscepter.HealthcheckConfig{Retries: 50, Backoff: 10 * time.Millisecond, MaxBackoff: 10 * time.Millisecond}},
 		},
 
-		GoodCommit: "8ee0e2a3c12e324c1b5c41f7861e341d91692efb",
-		BadCommit:  "9b70eda4f3e48d5d906f99b570a16d5a979b0a99",
+		GoodCommit: "69931611d894fc64d1caa98ad819d44d446a23c4",
+		BadCommit:  "130f2278ef36a4690ea92781d63879ba2453ecac",
 
 		CommitReplacementsBackup: replacements.Name(),
 
@@ -265,13 +265,13 @@ WORKDIR /app
 RUN apk add git
 COPY . .
 RUN go build -o server main.go
-CMD [[ $(git rev-parse HEAD) != "03cdf844a180c44763e12f29901ab5f8d61444f3" ]] && ./server
+CMD [[ $(git rev-parse HEAD) != "fc948eda71818bf9493735151fa0acedb4328024" ]] && ./server
 `,
 
 		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
 	}
 
-	// Run job whose CMD fails on commit 03cdf844a180c44763e12f29901ab5f8d61444f3, which is the first commit to be tested
+	// Run job whose CMD fails on commit fc948eda71818bf9493735151fa0acedb4328024, which is the first commit to be tested
 	// This means the build will succeed but the healthcheck won't
 	rsChan, _, err := job.Run()
 	assert.NoError(t, err, "Failed to start job")
@@ -281,7 +281,7 @@ CMD [[ $(git rev-parse HEAD) != "03cdf844a180c44763e12f29901ab5f8d61444f3" ]] &&
 
 	// Make sure the commit replacement is set correctly
 	out, err := io.ReadAll(replacements)
-	assert.Equal(t, "03cdf844a180c44763e12f29901ab5f8d61444f3:22a405d30a6c8d3eb045062ac2be4cff57e30d29,", string(out), "Commit replacement set incorrectly")
+	assert.Equal(t, "fc948eda71818bf9493735151fa0acedb4328024:d7b2ed805547dec1010e945c6f1958407a694e57,", string(out), "Commit replacement set incorrectly")
 
 	os.Remove(replacements.Name())
 	job.Stop()
@@ -301,8 +301,8 @@ func TestRunCommitByOffset(t *testing.T) {
 
 		CommitReplacementsBackup: "/dev/null",
 
-		GoodCommit: "8ee0e2a3c12e324c1b5c41f7861e341d91692efb",
-		BadCommit:  "9b70eda4f3e48d5d906f99b570a16d5a979b0a99",
+		GoodCommit: "69931611d894fc64d1caa98ad819d44d446a23c4",
+		BadCommit:  "130f2278ef36a4690ea92781d63879ba2453ecac",
 
 		Dockerfile: `FROM golang:1.22.0-alpine`,
 

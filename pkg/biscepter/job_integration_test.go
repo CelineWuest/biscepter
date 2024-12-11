@@ -238,6 +238,76 @@ CMD ./server
 	cleanupDocker(":93e3bf8b4be27be133c0d4740e936aa19e2aa52fff5e96f418669eb28ac8616b")()
 }
 
+func TestPossibleOtherCommits(t *testing.T) {
+	t.Parallel()
+	t.Cleanup(cleanupDocker("b7815cf3a73d66569823dee6249cce911da8a4cc00ee89080eeb6a4c19fba521"))
+
+	replacements, err := os.CreateTemp("", "")
+	assert.NoError(t, err, "Failed to create tmp file")
+
+	job := biscepter.Job{
+		Log:           logrus.StandardLogger(),
+		ReplicasCount: 1,
+
+		Ports: []int{3333},
+
+		Healthchecks: []biscepter.Healthcheck{
+			{Port: 3333, CheckType: biscepter.HttpGet200, Data: "/1", Config: biscepter.HealthcheckConfig{Retries: 50, Backoff: 10 * time.Millisecond, MaxBackoff: 10 * time.Millisecond}},
+		},
+
+		GoodCommit: "69931611d894fc64d1caa98ad819d44d446a23c4",
+		BadCommit:  "3219afdce02b9eb2633343ba6abe4e77b114b130",
+
+		CommitReplacementsBackup: replacements.Name(),
+
+		Dockerfile: `
+FROM golang:1.22.0-alpine
+WORKDIR /app
+RUN apk add git
+COPY . .
+RUN [[ $(git rev-parse HEAD) != "130f2278ef36a4690ea92781d63879ba2453ecac" ]]
+RUN go build -o server main.go
+CMD ./server
+`,
+
+		Repository: "https://github.com/CelineWuest/biscepter-test-repo.git",
+	}
+
+	// Run job whose build fails on commit 130f2278ef36a4690ea92781d63879ba2453ecac, which introduces a bug to /2
+	rsChan, ocChan, err := job.Run()
+	assert.NoError(t, err, "Failed to start job")
+
+	// Bisect
+	commitFound := false
+	for !commitFound {
+		select {
+		case rs := <-rsChan:
+			res, err := http.Get(fmt.Sprintf("http://localhost:%d/2", rs.Ports[3333]))
+			assert.NoError(t, err, "Failed to get response from webserver")
+
+			resBytes, err := io.ReadAll(res.Body)
+			assert.NoError(t, err, "Failed to read response body")
+			resText := string(resBytes)
+
+			if resText == "2" {
+				rs.IsGood()
+			} else {
+				rs.IsBad()
+			}
+		case oc := <-ocChan:
+			assert.Equal(t, "266cef4ee0ddfe01b9bbfc5152855d5b90291a4e", oc.Commit, "Wrong commit returned as offending")
+			if assert.Len(t, oc.PossibleOtherCommits, 1, "Not exactly one possible other commit returned") {
+				assert.Equal(t, "130f2278ef36a4690ea92781d63879ba2453ecac", oc.PossibleOtherCommits[0], "Actual offending commit not in possible other commits")
+			}
+			commitFound = true
+		}
+	}
+
+	assert.NoError(t, os.Remove(replacements.Name()), "Couldn't remove temp file")
+
+	assert.NoError(t, job.Stop(), "Couldn't stop job")
+}
+
 func TestReplacingBrokenHealthcheck(t *testing.T) {
 	t.Parallel()
 

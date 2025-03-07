@@ -322,6 +322,17 @@ func (j *Job) Stop() error {
 	return os.RemoveAll(j.repoPath)
 }
 
+type RunningCommit struct {
+	rs           *RunningSystem
+	Ports        map[int]int
+	finishedChan chan struct{}
+}
+
+func (rc *RunningCommit) Done() error {
+	rc.finishedChan <- struct{}{}
+	return rc.rs.stop()
+}
+
 // RunCommitByOffset starts up a system running the commit whose offset from the good commit is what is specified in the commitOffset argument.
 // This function rerturns an error if commitOffset is less than zero or greater than the amount of commits between the good and bad commits with which the job was initialized.
 //
@@ -336,7 +347,7 @@ func (j *Job) Stop() error {
 //	A (good) --- B --- C (bad)
 //
 // Calling this function with offset 0 spins up a system running the commit A, an offset 1 would run commit B and an offset of 2 would result in a system running C.
-func (j *Job) RunCommitByOffset(commitOffset int) (*RunningSystem, error) {
+func (j *Job) RunCommitByOffset(commitOffset int) (*RunningCommit, error) {
 	if len(j.commits) == 0 {
 		return nil, fmt.Errorf("job doesn't contain any commits. Have you initialized the passed job yet?")
 	}
@@ -357,7 +368,7 @@ func (j *Job) RunCommitByOffset(commitOffset int) (*RunningSystem, error) {
 // The returned RunningSystem will get terminated once either IsGood or IsBad is called on it.
 //
 // This method blocks until the running system is ready and has passed the healthchecks, or if something went wrong.
-func (j *Job) RunCommitByHash(commitHash string) (*RunningSystem, error) {
+func (j *Job) RunCommitByHash(commitHash string) (*RunningCommit, error) {
 	// Copy jobCopy and detach it from current job by reinitializing every pointer field except for imagesBuilding
 	jobCopy := &Job{
 		Log: j.Log,
@@ -399,15 +410,17 @@ func (j *Job) RunCommitByHash(commitHash string) (*RunningSystem, error) {
 		return nil, err
 	}
 
+	finishedChan := make(chan struct{})
+
 	// Ignore ocChan and just stop the replica when done
 	go func(rep *replica, ocChan chan OffendingCommit) {
-		<-ocChan
+		<-finishedChan
 		rep.stop()
 		jobCopy.Stop()
 	}(rep, ocChan)
 
 	rs := <-rsChan
-	return &rs, nil
+	return &RunningCommit{&rs, rs.Ports, finishedChan}, nil
 }
 
 // parseDockerfile sets j.dockerfileString based on the fields set.

@@ -402,7 +402,7 @@ func TestRunCommitByOffset(t *testing.T) {
 		rs, err := job.RunCommitByOffset(1)
 		assert.NoError(t, err, "Valid commit offset caused an error")
 
-		rs.IsGood()
+		rs.Done()
 	})
 
 	t.Cleanup(cleanupDocker(":b306a8132f4a6eaf8f97a8f383ca81d64776f6f0b112cfab96789b54908043a9"))

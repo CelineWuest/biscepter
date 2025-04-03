@@ -328,9 +328,8 @@ type RunningCommit struct {
 	finishedChan chan struct{}
 }
 
-func (rc *RunningCommit) Done() error {
+func (rc *RunningCommit) Done() {
 	rc.finishedChan <- struct{}{}
-	return rc.rs.stop()
 }
 
 // RunCommitByOffset starts up a system running the commit whose offset from the good commit is what is specified in the commitOffset argument.
@@ -413,11 +412,12 @@ func (j *Job) RunCommitByHash(commitHash string) (*RunningCommit, error) {
 	finishedChan := make(chan struct{})
 
 	// Ignore ocChan and just stop the replica when done
-	go func(rep *replica, ocChan chan OffendingCommit) {
+	go func(rep *replica, finishedChan chan struct{}) {
 		<-finishedChan
-		rep.stop()
-		jobCopy.Stop()
-	}(rep, ocChan)
+		if err := jobCopy.Stop(); err != nil {
+			j.Log.Errorf("Failed to stop job running commit %s - %v", commitHash, err)
+		}
+	}(rep, finishedChan)
 
 	rs := <-rsChan
 	return &RunningCommit{&rs, rs.Ports, finishedChan}, nil
